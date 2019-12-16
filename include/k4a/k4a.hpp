@@ -109,7 +109,7 @@ public:
         reset();
     }
 
-    /** Sets image to a shallow copy of other
+    /** Sets image to a shallow copy of the other image
      */
     image &operator=(const image &other) noexcept
     {
@@ -176,7 +176,14 @@ public:
 
     /** Returns true if the image is valid, false otherwise
      */
-    operator bool() const noexcept
+    explicit operator bool() const noexcept
+    {
+        return is_valid();
+    }
+
+    /** Returns true if the image is valid, false otherwise
+     */
+    bool is_valid() const noexcept
     {
         return m_handle != nullptr;
     }
@@ -436,7 +443,7 @@ public:
         reset();
     }
 
-    /** Sets capture to a shallow copy of other
+    /** Sets capture to a shallow copy of the other image
      */
     capture &operator=(const capture &other) noexcept
     {
@@ -503,7 +510,14 @@ public:
 
     /** Returns true if the capture is valid, false otherwise
      */
-    operator bool() const noexcept
+    explicit operator bool() const noexcept
+    {
+        return is_valid();
+    }
+
+    /** Returns true if the capture is valid, false otherwise
+     */
+    bool is_valid() const noexcept
     {
         return m_handle != nullptr;
     }
@@ -715,6 +729,28 @@ struct calibration : public k4a_calibration_t
         int valid = 0;
         k4a_result_t result = k4a_calibration_2d_to_2d(
             this, &source_point2d, source_depth, source_camera, target_camera, target_point2d, &valid);
+
+        if (K4A_RESULT_SUCCEEDED != result)
+        {
+            throw error("Calibration contained invalid transformation parameters!");
+        }
+        return static_cast<bool>(valid);
+    }
+
+    /** Transform a 2D pixel coordinate from color camera into a 2D pixel coordinate of the depth camera. This function
+     * searches along an epipolar line in the depth image to find the corresponding depth pixel.
+     * Returns false if the point is invalid in the target coordinate system (and therefore target_point2d should not be
+     * used) Throws error if calibration contains invalid data.
+     *
+     * \sa k4a_calibration_color_2d_to_depth_2d
+     */
+    bool convert_color_2d_to_depth_2d(const k4a_float2_t &source_point2d,
+                                      const image &depth_image,
+                                      k4a_float2_t *target_point2d) const
+    {
+        int valid = 0;
+        k4a_result_t result =
+            k4a_calibration_color_2d_to_depth_2d(this, &source_point2d, depth_image.handle(), target_point2d, &valid);
 
         if (K4A_RESULT_SUCCEEDED != result)
         {
@@ -1089,9 +1125,26 @@ public:
 
     /** Returns true if the device is valid, false otherwise
      */
-    operator bool() const noexcept
+    explicit operator bool() const noexcept
+    {
+        return is_valid();
+    }
+
+    /** Returns true if the device is valid, false otherwise
+     */
+    bool is_valid() const noexcept
     {
         return m_handle != nullptr;
+    }
+
+    /** Returns the underlying k4a_device_t handle
+     *
+     * Note the k4a_device_t handle does not have a reference count will be destroyed when the C++ object is destroyed.
+     * The caller is responsible for ensuring the C++ object outlives this handle.
+     */
+    k4a_device_t handle() const noexcept
+    {
+        return m_handle;
     }
 
     /** Closes a k4a device.
@@ -1286,7 +1339,7 @@ public:
     {
         std::vector<uint8_t> calibration;
         size_t buffer = 0;
-        k4a_buffer_result_t result = k4a_device_get_raw_calibration(m_handle, &calibration[0], &buffer);
+        k4a_buffer_result_t result = k4a_device_get_raw_calibration(m_handle, nullptr, &buffer);
 
         if (result == K4A_BUFFER_RESULT_TOO_SMALL && buffer > 1)
         {

@@ -40,7 +40,8 @@ typedef struct _capturesync_context_t
     bool sync_captures;            // enables depth and color captures to be synchronized.
     bool synchronized_images_only; // Only send captures to the user if they contain both color and depth images
 
-    bool waiting_for_clean_depth_ts;
+    bool waiting_for_clean_depth_ts; // Flag to indicate the TS on depth captures has been reset.
+    int depth_captures_dropped;      // Count of dropped captures waiting for waiting_for_clean_depth_ts.
 
     bool disable_sync;      // Disables synchronizing depth and color captures. Instead releases them as they arrive.
     bool enable_ts_logging; // Write capture timestamps and type to the logger to analysis
@@ -196,12 +197,14 @@ void capturesync_add_capture(capturesync_t capturesync_handle,
 
     if (K4A_FAILED(capture_result))
     {
-        // Notify queue of error
-        queue_error(sync->sync_queue);
-        queue_error(sync->depth_ir.queue);
-        queue_error(sync->color.queue);
-
-        LOG_WARNING("Capture Error Detected, %s", color_capture ? "Color " : "Depth ");
+        if (sync->running)
+        {
+            LOG_WARNING("Capture Error Detected, %s", color_capture ? "Color " : "Depth ");
+        }
+        // Stop queues
+        queue_stop(sync->sync_queue);
+        queue_stop(sync->depth_ir.queue);
+        queue_stop(sync->color.queue);
 
         // Reflect the low level error in the current result
         result = capture_result;
@@ -263,13 +266,18 @@ void capturesync_add_capture(capturesync_t capturesync_handle,
             // started. This code protects against the depth timestamps from being reported before the reset happens.
             if (ts_raw_capture / sync->fps_period > 10)
             {
-                LOG_WARNING("Dropping depth capture as TS is too large TS:%10lld", ts_raw_capture);
+                sync->depth_captures_dropped++;
                 result = K4A_RESULT_FAILED; // Not an error, just a graceful exit
             }
             else
             {
                 // Once we get a good TS we are going to always get a good TS
                 sync->waiting_for_clean_depth_ts = false;
+                if (sync->depth_captures_dropped)
+                {
+                    LOG_INFO("Dropped %d depth captures waiting for time stamps to stabilize",
+                             sync->depth_captures_dropped);
+                }
             }
         }
     }
@@ -495,6 +503,7 @@ k4a_result_t capturesync_start(capturesync_t capturesync_handle, const k4a_devic
         sync->fps_1_quarter_period = sync->fps_period / 4;
         sync->depth_delay_off_color_usec = config->depth_delay_off_color_usec;
         sync->sync_captures = true;
+        sync->depth_captures_dropped = 0;
 
         if (config->color_resolution == K4A_COLOR_RESOLUTION_OFF || config->depth_mode == K4A_DEPTH_MODE_OFF)
         {
@@ -509,7 +518,7 @@ k4a_result_t capturesync_start(capturesync_t capturesync_handle, const k4a_devic
         queue_enable(sync->depth_ir.queue);
         queue_enable(sync->sync_queue);
 
-        // Not taking the lock as we don't need to syncronize this on start
+        // Not taking the lock as we don't need to synchronize this on start
         sync->running = true;
     }
 

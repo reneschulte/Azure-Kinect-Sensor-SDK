@@ -2,7 +2,7 @@
 
 This information is for how to build your own copy of the SDK binaries. Most users of 
 the Azure Kinect DK should not need to re-build the SDK, if you just need to use the SDK
-see [usage](usage.md) for more information. If you need to build from source, you have to clone the repository instead of downloading the Zip file o ensure all the submodule dependencies in place.
+see [usage](usage.md) for more information. If you need to build from source, you have to clone the repository instead of downloading the Zip file to ensure all the submodule dependencies in place.
 
 ## Support Configurations
 
@@ -60,18 +60,18 @@ The following tools are required to build on Windows:
 The following tools are optional:
 
 * [Doxygen](http://www.doxygen.nl/download.html). Add doxygen to the PATH.
-  Required for building documentation. To use, pass the CMake parameter ```-DK4A_BUILD_DOCS=1```
+  Required for building documentation. To use, pass the CMake parameter `-DK4A_BUILD_DOCS=1`
 
 * [Clang-Format](http://releases.llvm.org/download.html). Please download clang
-  v6.0.0 since that is what we are using to format our code. To invoke, call ```ninja clangformat```
+  v6.0.0 since that is what we are using to format our code. To invoke, call `ninja clangformat`
 
 If you are building from a command prompt, it **must** be a **x64 Visual Studio
 developer command prompt** in order for CMake to find the installed compilers.
 We build both 32-bit and 64-bit binaries, but 64-bit binaries are the only
 binaries that are tested. (The command prompt should be called something like
 x64 Native Tools Command Prompt for VS 2017). Note: call the command line tool
-with the option ```-arch=amd64``` for x64 builds i.e ```VsDevCmd.bat
--arch=amd64```
+with the option `-arch=amd64` for x64 builds i.e `VsDevCmd.bat
+-arch=amd64`
 
 **NOTE:** *You can run
 [scripts/verify-windows.ps1](../scripts/verify-windows.ps1) to verify that your
@@ -79,14 +79,17 @@ Windows PC is setup properly.*
 
 ### Linux Dependencies
 
-The list of libraries and tools that must be installed on your machine in
-order to build can be found in our script
-[bootstrap-ubuntu.sh](../scripts/bootstrap-ubuntu.sh).
+The list of libraries and tools that must be installed is maintained in a Dockerfile
+used by our CI system. Extract and run the install list from the 
+[Dockerfile](../scripts/Dockerfile) to ensure your machine has required dependencies.
 
 The depth engine is needed as well. The depth engine (DE) is a closed source
-binary shipped with the linux debian package. The DE binary needs to be copied
-to the host system and added to the loader path. **NOTE** *This step is not
+binary shipped with the Linux Debian package. As an example, run `apt install
+libk4a1.3` to install the Azure Kinect 1.3 and get the depth engine. See 
+[using the depth engine](usage.md#debian-package) for information about
+versioning and adding the Microsoft's Package Repository to your machine. **NOTE** *This step is not
 need for building, but is required running the SDK*
+
 
 ## Building
 
@@ -95,20 +98,25 @@ need for building, but is required running the SDK*
 1. Create a folder named "build" in the root of the git repo and cd into that
     directory.
 
-    ```shell
+    ```
     mkdir build && cd build
     ```
 
 2. Run CMake from that directory. The preferred build is ninja. All other
     generators are untested.
-
-    ```shell
+    
+    Release Build:
+    ```
     cmake .. -GNinja
+    ```
+    Debug Build:
+    ```
+    cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug
     ```
 
 3. Run the build (ninja).
 
-    ```shell
+    ```
     ninja
     ```
 
@@ -116,10 +124,6 @@ need for building, but is required running the SDK*
 
 Visual Studio 2017 supports opening CMake based projects directly.
 Use File / Open / CMake ... to open the root CMakeLists.txt in the project.
-
-To cross compile for Linux on Windows you can run a pre-configured
-[docker container](../docker/DOCKER.md) with the tools needed for Visual
-Studio.
 
 ### C# Wrapper
 

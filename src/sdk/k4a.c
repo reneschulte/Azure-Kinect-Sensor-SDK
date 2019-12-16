@@ -685,9 +685,10 @@ static k4a_result_t validate_configuration(k4a_context_t *device, const k4a_devi
             if (config->subordinate_delay_off_master_usec > fps_in_usec)
             {
                 result = K4A_RESULT_FAILED;
-                LOG_ERROR(
-                    "The configured subordinate device delay from the master device cannot exceed one frame interval.",
-                    0);
+                LOG_ERROR("The configured subordinate device delay from the master device cannot exceed one frame "
+                          "interval of %d. User requested %d",
+                          fps_in_usec,
+                          config->subordinate_delay_off_master_usec);
             }
         }
 
@@ -719,7 +720,10 @@ static k4a_result_t validate_configuration(k4a_context_t *device, const k4a_devi
             if (config->depth_delay_off_color_usec < -fps || config->depth_delay_off_color_usec > fps)
             {
                 result = K4A_RESULT_FAILED;
-                LOG_ERROR("The configured depth_delay_off_color_usec must be within +/- one frame interval.", 0);
+                LOG_ERROR("The configured depth_delay_off_color_usec must be within +/- one frame interval of %d. User "
+                          "requested %d",
+                          fps,
+                          config->depth_delay_off_color_usec);
             }
         }
         else if (!depth_enabled && !color_enabled)
@@ -1132,6 +1136,16 @@ k4a_result_t k4a_calibration_2d_to_2d(const k4a_calibration_t *calibration,
 {
     return TRACE_CALL(transformation_2d_to_2d(
         calibration, source_point2d->v, source_depth_mm, source_camera, target_camera, target_point2d->v, valid));
+}
+
+k4a_result_t k4a_calibration_color_2d_to_depth_2d(const k4a_calibration_t *calibration,
+                                                  const k4a_float2_t *source_point2d,
+                                                  const k4a_image_t depth_image,
+                                                  k4a_float2_t *target_point2d,
+                                                  int *valid)
+{
+    return TRACE_CALL(
+        transformation_color_2d_to_depth_2d(calibration, source_point2d->v, depth_image, target_point2d->v, valid));
 }
 
 k4a_transformation_t k4a_transformation_create(const k4a_calibration_t *calibration)

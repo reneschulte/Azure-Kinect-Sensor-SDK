@@ -1,8 +1,6 @@
 # Azure Kinect SDK (K4A)
 
-Welcome to the Azure Kinect DK Sensor SDK! While devices and the Body Tracking SDK will be available this
-summer, we wanted to share the Sensor SDK now. We hope you can use this interim period to get familiar with
-our SDK, ask questions, and provide feedback. See [Azure.com/Kinect](https://Azure.com/kinect) for device
+Welcome to the Azure Kinect Sensor SDK! We hope you can use it to build many great applications and participate in the project. Don't be shy to ask questions, and provide feedback. See [Azure.com/Kinect](https://Azure.com/kinect) for device
 info and available documentation.
 
 [![Build Status
@@ -53,6 +51,13 @@ We welcome your contributions! Please see the [contribution guidelines](CONTRIBU
 ## Feedback
 
 For SDK feedback or to report a bug, please file a [GitHub Issue](https://github.com/Microsoft/Azure-Kinect-Sensor-SDK/issues). For general suggestions or ideas, visit our [feedback forum](https://aka.ms/azurekinectfeedback).
+
+## Sample Code
+
+There are several places where the sample code can be found.
+
+- In this repository: [Azure-Kinect-Sensor-SDK\examples](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/tree/develop/examples)- each example has a readme page that describes it and the steps to set it up.
+- [Azure-Kinect-Samples](https://github.com/microsoft/Azure-Kinect-Samples) repository. There are multiple examples of how to use both Sensor and Body tracking SDKs.
 
 ## Q&A
 

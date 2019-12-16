@@ -15,13 +15,13 @@ Releases are scheduled on demand based on program needs.
 ### Alpha Release
 
 Alpha builds are built using source from the develop branch and are numbered with the
-expected release number for current development, such as ```1.1.0-alpha.0```.
+expected release number for current development, such as `1.1.0-alpha.0`.
 
 Alpha builds expect heavy churn and are not guaranteed to be backward compatible with each other.
 
 ### Beta Release
 
-Beta builds are built from the release branches, such as ```1.1.0-beta.0```.
+Beta builds are built from the release branches, such as `1.1.0-beta.0`.
 
 Release branches are created when that release is being stabilized, at which point only bug fixes and changes 
 required for that release are merged or cherry-picked in to the release branch. Fixes may alternatively be made 
@@ -30,15 +30,15 @@ to the release branch directly and then merged back to the develop branch.
 ### Official Release
 
 Once a beta build has been signed off for release, an official build is created with code from that release branch,
-such as ```1.1.0```
+such as `1.1.0`
 
 ### Patch releases
 
 Critical changes to a released build may be made in the release branch to patch an existing release. These
 changes do not introduce functionality or break compatibility.
 
-Changes are made in the release branch for the existing release, such as ```release/1.0.x```, and are verified with beta
-builds for the patch, such as ```1.0.1-beta.0```, before the patch is signed off and released as ```1.0.1```
+Changes are made in the release branch for the existing release, such as `release/1.0.x`, and are verified with beta
+builds for the patch, such as `1.0.1-beta.0`, before the patch is signed off and released as `1.0.1`
 
 ## Moving changes between release branches
 
@@ -88,7 +88,7 @@ used to create a released build. Checkout the commit that matches the release la
 ## Artifacts and Packaging
 The following table contains all artifacts that are released in installers and packages. The file paths listed in the table are only representative, within any given package they will be different to match the standards and conventions for those packages. Each unique released artifact is listed in this table only once, although they will potentially appear duplicate times in packages or installers.
 
-File                                                           | MSI                | NuGet              | Runtime Debian Package             | Development Debian Package         | Tooling Debian Package
+File                                                           | MSI/Installer      | NuGet              | Runtime Debian Package | Development Debian Package | Tooling Debian Package
 -------------------------------------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | -----------------
 LICENSE.txt \*                                                 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
 REDIST.txt \*                                                  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
@@ -116,11 +116,11 @@ include/k4arecord/types.h                                      | :white_check_ma
 linux-ubuntu/x64/release/libdepthengine.so \*                  |                    |                    | :white_check_mark: |                    |
 linux-ubuntu/x64/release/libdepthengine.so.2.0 \*              |                    |                    | :white_check_mark: |                    |
 linux-ubuntu/x64/release/libk4a.so (symlink)                   |                    |                    |                    | :white_check_mark: |
-linux-ubuntu/x64/release/libk4a.so.1.1 (symlink)               |                    |                    | :white_check_mark: |                   |
-linux-ubuntu/x64/release/libk4a.so.1.1.0                       |                    |                    | :white_check_mark: |                    |
+linux-ubuntu/x64/release/libk4a.so.1.x (symlink)               |                    |                    | :white_check_mark: |                   |
+linux-ubuntu/x64/release/libk4a.so.1.x.x                       |                    |                    | :white_check_mark: |                    |
 linux-ubuntu/x64/release/libk4arecord.so (symlink)             |                    |                    |                    | :white_check_mark: |
-linux-ubuntu/x64/release/libk4arecord.so.1.1 (symlink)         |                    |                    | :white_check_mark: |                    |
-linux-ubuntu/x64/release/libk4arecord.so.1.1.0                 |                    |                    | :white_check_mark: |                    |
+linux-ubuntu/x64/release/libk4arecord.so.1.x (symlink)         |                    |                    | :white_check_mark: |                    |
+linux-ubuntu/x64/release/libk4arecord.so.1.x.x                 |                    |                    | :white_check_mark: |                    |
 linux-ubuntu/tools/x64/release/AzureKinectFirmwareTool         |                    |                    |                    |                    | :white_check_mark:
 linux-ubuntu/tools/x64/release/k4arecorder                     |                    |                    |                    |                    | :white_check_mark:
 linux-ubuntu/tools/x64/release/k4aviewer                       |                    |                    |                    |                    | :white_check_mark:
